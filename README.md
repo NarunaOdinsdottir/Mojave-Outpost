@@ -23,14 +23,21 @@ Dieses Repository dokumentiert meinen Einstieg in AWS mit Fokus auf:
 Vom „Cloud User“ → **Security Mindset / DevSecOps**
 
 ---
+Willkommen in der Mojave, Ranger. Setz dich, nimm dir eine Sunset Sarsaparilla und lass uns den Statusbericht vom Mojave Outpost durchgehen. Die RNK hat Großes mit dir vor.
+📜 Logbuch des Mojave Outposts: Die Befestigung von Sektor AWS
+🏜️ Tag 1–2: Das Fundament (Operation "Sauberes Lager")
 
-# 🟩 Woche 1 – Fundament legen
+Alles begann damit, das Hauptquartier zu sichern. Der Root-Account – das Äquivalent zum High-Command in Shady Sands – wurde mit einer MFA-Verschlüsselung hinter dicke Mauern verbannt. Er wird nur im absoluten Notfall kontaktiert.
 
-## 🎯 Ziel:
+Stattdessen hast du dir deine eigene Identität geschaffen: Ranger Johnson. Über das Terminal hast du die Befehle in den Äther gejagt:
 
-Saubere, sichere AWS-Basis
+    aws iam create-user --user-name RangerJohnson
 
----
+    Die Gruppe RNK wurde gegründet und mit Admin-Rechten ausgestattet.
+
+    Ranger Ghost wurde als Security-Audit-Posten mit ReadOnly-Rechten aufgestellt.
+
+Status: Der Zugriff erfolgt nur noch über autorisierte Ranger-Identitäten. Der Generalstab (Root) bleibt im Bunker.
 
 ## 🔐 IAM & Account Setup
 
@@ -72,6 +79,9 @@ Später verbessert:
 ❌ Root wird ignoriert
 
 ---
+🏗️ Tag 3–4: Der Wachturm (EC2 & Der Schlüssel zum Tor)
+
+Ein Außenposten braucht Mauern. Du hast eine EC2-Instanz (Ubuntu) hochgezogen – dein erster echter Server in der Ödland-Cloud.
 
 # 🟨 EC2 – Der erste Server
 
@@ -192,6 +202,9 @@ sudo apt install nginx
 
 > *„If you can see it… someone else can too.“*
 
+⚔️ "Wie hell brennt dein Lagerfeuer?" (Recon & Hardening)
+
+Du hast angefangen, wie ein Raider zu denken, um den Outpost zu schützen. 
 ---
 
 ## 🔍 Portscan (Recon)
