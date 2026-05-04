@@ -23,7 +23,9 @@ Dieses Repository dokumentiert meinen Einstieg in AWS mit Fokus auf:
 Vom „Cloud User“ → **Security Mindset / DevSecOps**
 
 ---
-Willkommen in der Mojave, Ranger. Setz dich, nimm dir eine Sunset Sarsaparilla und lass uns den Statusbericht vom Mojave Outpost durchgehen. Die RNK hat Großes mit dir vor.
+Willkommen in der Mojave, Ranger. Setz dich, nimm dir eine Sunset Sarsaparilla und lass uns den Statusbericht vom Mojave Outpost durchgehen.
+Die RNK hat Großes mit dir vor.
+
 📜 Logbuch des Mojave Outposts: Die Befestigung von Sektor AWS
 🏜️ Tag 1–2: Das Fundament (Operation "Sauberes Lager")
 
