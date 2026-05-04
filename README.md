@@ -138,9 +138,11 @@ chmod 400 Mojave-Outpost.pem
 ```
 
 ---
+## ⚠️ Real World Lessons (keine Theorie)
 
-## 🧠 Learning:
-
+- SSH verweigert unsichere Keys → gelernt, warum Rechte kritisch sind
+- PEP 668 → modernes Python bricht alte Gewohnheiten
+- Erste Bot-Aktivität in Logs → Internet scannt IMMER
 * SSH ist **extrem strikt**
 * Private Keys dürfen **niemandem sonst zugänglich sein**
 
@@ -334,7 +336,8 @@ chmod 600 authorized_keys
 
 ## 🧠 Prinzip:
 
-> 🔐 Schlüssel + Passwort = zusätzlicher Schutzlayer
+>🔐 SSH: Key-basierter Zugriff
+ 🔐 Privilege Escalation: zusätzlich Passwort (sudo)
 
 ---
 
@@ -365,7 +368,7 @@ cat /var/log/auth.log
 
 ---
 
-# ⚙️ Python Problem (Real World Issue)
+## ⚙️ Python Problem (Real World Issue)
 
 ## ❌ Fehler:
 
