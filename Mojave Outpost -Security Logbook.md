@@ -218,3 +218,6 @@ Status:
 🟢 Operational
 🟡 Under Active Development
 🔴 Attack surface continuously observed
+
+<img width="1800" height="1083" alt="Screenshot 2026-05-08 at 14-30-03 Mojave Outpost" src="https://github.com/user-attachments/assets/5fce8fa9-6ad5-4064-a201-22f94d611d38" />
+
