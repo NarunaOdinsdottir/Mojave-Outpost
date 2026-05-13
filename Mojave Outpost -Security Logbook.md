@@ -221,3 +221,61 @@ Status:
 
 <img width="1800" height="1083" alt="Screenshot 2026-05-08 at 14-30-03 Mojave Outpost" src="https://github.com/user-attachments/assets/5fce8fa9-6ad5-4064-a201-22f94d611d38" />
 
+
+## 📜 MOJAVE OUTPOST: SECURITY LOG [MAI 2026]
+
+Standort: Mojave-Ödland, RNK-Außenposten
+
+## 🛠️ LOGISTIK: DAS ASSET-MANÖVER [07.05.2026]
+
+Um die Moral der Truppe zu stärken, wurde die visuelle Infrastruktur des Terminals aktualisiert.
+
+    Datentransfer: Versorgungsgüter (Bilder) wurden erfolgreich per SCP von der Basis in das Heimverzeichnis des Rangers verschoben.
+
+        scp -i XXX.pem BILD.jpg RangerJohnson@DEINE-IP:/home/RangerJohnson/
+
+    Web-Deployment: Die Assets wurden in das aktive Front-End-Archiv des Außenpostens verlegt:
+
+        sudo cp /home/RangerJohnson/mojave.jpg /var/www/html/
+
+## 🛡️ IAM-STRUKTUR: OPERATION „LEAST PRIVILEGE“ [10.05.2026]
+
+Wir haben die Befehlskette im Cloud-Sektor neu geordnet, um die Sicherheit zu maximieren und die Verantwortlichkeiten zu trennen.
+
+📋 Die neuen Einheiten:
+Gruppe	Mitglied	Zugewiesene Berechtigungen (Policies)
+RNK (Admins)	RangerJohnson	AdministratorAccess (Nur für Notfälle/MFA empfohlen)
+OutpostDevOps	MajorKnight	EC2FullAccess, S3ReadOnly, CloudWatchReadOnly
+SecurityAudit	RangerGhost	ReadOnlyAccess, CloudWatchReadOnlyAccess
+Karawane	RoseCassidy	IAMUserChangePassword (Minimale Rechte)
+
+Strategische Analyse:
+
+    Identity Separation: Durch die Trennung von Dev, Audit und Standard-Usern wird das Risiko interner Sabotage minimiert.
+
+    Governance: RangerGhost kann nun Logs analysieren, aber keine Systeme verändern – klassisches SOC-Prinzip.
+
+## 🤖 AUTOMATISIERUNG: DER VAULT-WATCHER SERVICE
+
+Das Dashboard ist jetzt kein einfaches Skript mehr, sondern ein echter Linux-Hintergrunddienst (systemd).
+
+🔧 Der Kampf mit dem System-Daemon
+
+Der Weg zur stabilen Überwachung war steinig, wie die Terminal-Logs zeigen:
+
+    Fehlzündung (Unit not found): Ein Ordner wurde fälschlicherweise als .service benannt. Dieser wurde mit sudo rmdir RNK_Watcher.service entfernt.
+
+    Das psutil-Gespenst: Das System meldete ModuleNotFoundError: No module named 'psutil'.
+
+        Ursache: Der Dienst nutzte das globale Python statt der isolierten Umgebung (venv).
+
+    Der finale Fix: Die RNK_Watcher.service wurde so konfiguriert, dass sie das Python-Executable direkt aus dem venv startet.
+
+## 🟢 Status: ACTIVE (RUNNING)
+
+Nach dem Befehl sudo systemctl restart RNK_Watcher.service meldet das System:
+
+    Main PID: 66662 (python3)
+    ✅ Keine fehlgeschlagenen Logins erkannt.
+
+Ad Victoriam, Ranger. Die Automatisierung schläft nie! 🫡🏜️
