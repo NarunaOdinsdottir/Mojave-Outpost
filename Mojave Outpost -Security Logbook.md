@@ -244,6 +244,7 @@ Wir haben die Befehlskette im Cloud-Sektor neu geordnet, um die Sicherheit zu ma
 
 📋 Die neuen Einheiten:
 | Gruppe |Mitglied | Zugewiesene Berechtigungen (Policies) |
+---
 | RNK (Admins) | RangerJohnson | AdministratorAccess (Nur für Notfälle/MFA empfohlen)|
 | OutpostDevOps | MajorKnight | "EC2FullAccess, S3ReadOnly, CloudWatchReadOnly" |
 | SecurityAudit | RangerGhost | "ReadOnlyAccess, CloudWatchReadOnlyAccess" |
