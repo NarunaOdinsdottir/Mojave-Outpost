@@ -1,9 +1,9 @@
-## 🏜️ MOJAVE OUTPOST – SECURITY LOGBOOK
+# 🏜️ MOJAVE OUTPOST – SECURITY LOGBOOK
 📡 Week 3–4 Field Notes (Detection, Nginx, Web Layer Evolution)
 
 „The Mojave doesn’t just record logs… it watches patterns.“
 
-# 📜 OPERATION OVERVIEW
+## 📜 OPERATION OVERVIEW
 🎯 Mission Focus
 
 Diese Phase dreht sich um:
