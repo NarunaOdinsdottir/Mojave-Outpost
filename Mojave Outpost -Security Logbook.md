@@ -251,7 +251,9 @@ Wir haben die Befehlskette im Cloud-Sektor neu geordnet, um die Sicherheit zu ma
 | Karawane | RoseCassidy | IAMUserChangePassword (Minimale Rechte) |
 
 Strategische Analyse:
+
     Identity Separation: Durch die Trennung von Dev, Audit und Standard-Usern wird das Risiko interner Sabotage minimiert.
+    
     Governance: RangerGhost kann nun Logs analysieren, aber keine Systeme verändern – klassisches SOC-Prinzip.
 
 ## 🤖 AUTOMATISIERUNG: DER VAULT-WATCHER SERVICE
