@@ -243,11 +243,11 @@ Um die Moral der Truppe zu stärken, wurde die visuelle Infrastruktur des Termin
 Wir haben die Befehlskette im Cloud-Sektor neu geordnet, um die Sicherheit zu maximieren und die Verantwortlichkeiten zu trennen.
 
 📋 Die neuen Einheiten:
-|| Gruppe |Mitglied | Zugewiesene Berechtigungen (Policies) ||
-|| RNK (Admins) | RangerJohnson | AdministratorAccess (Nur für Notfälle/MFA empfohlen)||
-|| OutpostDevOps | MajorKnight | "EC2FullAccess, S3ReadOnly, CloudWatchReadOnly" ||
-|| SecurityAudit | RangerGhost | "ReadOnlyAccess, CloudWatchReadOnlyAccess" ||
-|| Karawane | RoseCassidy | IAMUserChangePassword (Minimale Rechte) ||
+| Gruppe |Mitglied | Zugewiesene Berechtigungen (Policies) |
+| RNK (Admins) | RangerJohnson | AdministratorAccess (Nur für Notfälle/MFA empfohlen)|
+| OutpostDevOps | MajorKnight | "EC2FullAccess, S3ReadOnly, CloudWatchReadOnly" |
+| SecurityAudit | RangerGhost | "ReadOnlyAccess, CloudWatchReadOnlyAccess" |
+| Karawane | RoseCassidy | IAMUserChangePassword (Minimale Rechte) |
 
 Strategische Analyse:
     Identity Separation: Durch die Trennung von Dev, Audit und Standard-Usern wird das Risiko interner Sabotage minimiert.
