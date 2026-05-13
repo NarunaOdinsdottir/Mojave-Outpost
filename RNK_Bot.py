@@ -10,8 +10,8 @@ import os
 CHECK_INTERVAL = 300  # alle 5 Minuten
 
 # Telegram Config
-TELEGRAM_TOKEN = "8658518055:AAGKRkwwoKc4QNxz9r18rJrN0KSrFVrepyw"
-CHAT_ID = "5034898880"
+TELEGRAM_TOKEN = ""
+CHAT_ID = ""
 
 async def send_alert(bot_instance, report):
     msg = f"📊 Vault-OS Alert [{report['timestamp']}]\n"
