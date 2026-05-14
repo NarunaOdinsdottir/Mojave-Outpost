@@ -89,10 +89,11 @@ def dashboard():
         else:
             print("\n✅ Keine fehlgeschlagenen Logins")
 
-        if data["suspicious"] > 0:
+        if data["suspicious"]:
             print("\n⚠️ Auffällige Prozesse:")
-            for s, count in data["suspicious"].items():
-                print(f"{s}: {count} Auffälligkeiten")
+            for proc in data["suspicious"]:
+                print(proc)
+                
         else:
             print("\n✅ Keine auffälligen Prozesse")
 
