@@ -409,4 +409,4 @@ Der Zombie-Alarm: Die Auswertung meldet 1 zombie. Wenn man genau hinsiehst:
 
     RangerJ+ 1878558  0.0  0.0      0     0 ?        Z    09:59   0:00 [sh] <zombie>
 
-Hier hat ein Cronjob einen Befehl (sh) abgesetzt, aber der Mutterprozess hat die Erfolgsmeldung noch nicht abgeholt. Ein digitaler Leichnam, der auf Aufräumung wartet. Ungefährlich, aber ein genialer Fund für dein Logbuch!
+Hier hat ein Cronjob einen Befehl (sh) abgesetzt, aber der Mutterprozess hat die Erfolgsmeldung noch nicht abgeholt. Ein digitaler Leichnam, der auf Aufräumung wartet. Ungefährlich, aber ein genialer Fund für das Logbuch!
