@@ -281,6 +281,47 @@ Nach dem Befehl sudo systemctl restart RNK_Watcher.service meldet das System:
 
 Ad Victoriam, Ranger. Die Automatisierung schläft nie! 🫡🏜️
 
+
+🟢 VAULT-OS DASHBOARD
+========================================
+⏱️ 13:03:47
+
+🔥 CPU: 0.0%
+🧠 RAM: 40.8%
+💾 DISK: 56.1%
+
+📊 TOP PROZESSE
+PID   CPU   RAM   USER     PROZESS
+----------------------------------------
+1899130   0.1%   1.6% RangerJohnson python3
+882671   0.0%   1.3% RangerJohnson python3
+1900790   0.0%   0.8% RangerJohnson sshd-session
+1898721   0.0%   0.8% RangerJohnson sshd-session
+129     0.0%  14.4% root     systemd-journal
+========================================
+📜 Threat-Level Logins
+STATUS: GREEN
+Fehlgeschlagene Logins heute: 0
+
+🛡️ SECURITY STATUS
+========================================
+
+👤 Letzter Login:
+RangerJo ssh          31.17.254.29     Tue May 19 12:30 - still logged in
+
+wtmpdb begins Tue May 19 12:30:02 2026
+
+✅ Keine fehlgeschlagenen Logins
+
+⚠️ Auffällige Prozesse:
+root         129  0.0 14.4 274932 134792 ?       S<s  May02   5:22 /usr/lib/systemd/systemd-journald
+
+========================================
+✅ System stabil
+SQLi Detection Fehler: [Errno 13] Permission denied: '/var/log/nginx/access.log'
+
+
+
 ---
 
 # ☢️ MOJAVE OUTPOST: COMBAT & METRIC LOG [MAI 2026]
@@ -361,7 +402,8 @@ Plaintext
 root           2  0.0  0.0      0     0 ?        S    May02   0:00 [kthreadd]
 root          56  0.0  0.0      0     0 ?        S    May02   0:02 [kswapd0]
 
-## Was ist das? Das sind die Organe des Servers. kthreadd erzeugt Kernel-Prozesse, kswapd0 verwaltet den virtuellen Speicher, falls der RAM knapp wird. Sie verbrauchen 0.0% CPU und lauern im Hintergrund – wie getarnte Nightstalker.
+## Was ist das? 
+Das sind die Organe des Servers. kthreadd erzeugt Kernel-Prozesse, kswapd0 verwaltet den virtuellen Speicher, falls der RAM knapp wird. Sie verbrauchen 0.0% CPU und lauern im Hintergrund – wie getarnte Nightstalker.
 
 Der Zombie-Alarm: Die Auswertung meldet 1 zombie. Wenn man genau hinsiehst:
 
