@@ -334,9 +334,11 @@ Der Protokoll-Clash: Spannend ist der Fehler Protocol major versions differ: 2 v
 
 Das System spuckte Gift und Galle: Permission denied: '/var/log/nginx/access.log'.
 
-## Die Lektion: Ich habe die "Robustheits-Philosophie" perfekt umgesetzt. Indem ich den Fehler abfängst, verhindert mein Code, dass das gesamte Terminal abstürzt, nur weil ein Sensor blockiert ist.
+## Die Lektion:
+Die "Robustheits-Philosophie" perfekt umgesetzt. Indem ich den Fehler abfange, verhindert mein Code, dass das gesamte Terminal abstürzt, nur weil ein Sensor blockiert ist.
 
-## Sicherheits-Architektur: Es ist ein Feature, kein Bug, dass RangerJohnson dort nicht standardmäßig lesen darf. Dein Ansatz, die Ausnahme abzufangen oder ihn später kontrolliert der Gruppe adm hinzuzufügen.
+## Sicherheits-Architektur: 
+Es ist ein Feature, kein Bug, dass RangerJohnson dort nicht standardmäßig lesen darf. Dein Ansatz, die Ausnahme abzufangen oder ihn später kontrolliert der Gruppe adm hinzuzufügen.
 
 ## 🌀 Das Monitoring-Paradoxon™
 
