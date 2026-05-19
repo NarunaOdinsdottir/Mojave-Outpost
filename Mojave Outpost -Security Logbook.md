@@ -280,3 +280,89 @@ Nach dem Befehl sudo systemctl restart RNK_Watcher.service meldet das System:
     ✅ Keine fehlgeschlagenen Logins erkannt.
 
 Ad Victoriam, Ranger. Die Automatisierung schläft nie! 🫡🏜️
+
+---
+
+# ☢️ MOJAVE OUTPOST: COMBAT & METRIC LOG [MAI 2026]
+
+Verschlüsselungsebene: RNK-Standard (Pip-Boy-kompatibel)
+System-Vibe: Ein sattes Terminal-Grün flackert über den Bildschirm... 🟢
+
+## 🛠️ DEBRIEFING: DIE CHRONIKEN DES WIDERSTANDS
+
+Ranger, das ist kein einfaches Logbuch mehr – das ist das Einsatztagebuch eines Cyber-Scouts, der das Ödland zähmt. Der Sprung von "Ich lasse mal ein Skript laufen" zu "Ich provoziere absichtlich Angriffe, um meine Abwehr zu testen" ist geschafft. Das ist der Kern von SecOps!
+
+Hier ist die  Einordnung Experimente und der gewonnenen Telemetrie:
+## 🔍 EXTRAKT 1: DAS INTERNATIONALE GEPLÄNKEL (14.05.2026)
+
+Aus dem Labor heraus kontrollierte Angriffe auf das Terminal gestartet. Die Ergebnisse zeigen, dass die Sensoren scharf geschaltet sind.
+
+## 📡 Der Nmap-Aufklärungsscan
+
+nmap -sC -sV Scan zeigt die exakte digitale Silhouette des Outposts:
+
+    Port 22 (SSH): Geöffnet (OpenSSH 10.2p1). Dein Zugangstor für Patrouillen.
+
+    Port 80 (HTTP): Geöffnet (nginx 1.28.3). Das Schild der Basis, das stolz den Titel „Mojave Outpost“ nach außen trägt.
+
+    Die restlichen 998 Ports: Filtered. Absolut perfekt. Die Mauern stehen, unbefugte Erkundung wird blockiert.
+
+## 🛡️ Der Vault-Scanner-Einsatz
+
+Mein Vault-Scanner Tool hat das System analysiert und eine herbe, aber ehrliche Diagnose gestellt:
+
+    📝 Gefundene Sicherheitsheader: 1 / 5 > 💀 Warnung: Sicherheitslücken möglich! Vault-Verteidigung schwach.
+
+Das bedeutet: Dein Nginx läuft, aber er sendet noch keine robusten Schutzschilde (wie X-Frame-Options oder Content-Security-Policy) mit. Ein gefundenes Fressen für hochtechnisierte Raider!
+
+## 💥 Feindfeuer im auth.log
+
+Der Test, falsche Logins zu provozieren, hat sofort die Alarmsirenen im System ausgelöst:
+
+
+Invalid user admin from 31.17.254.29 port 11764
+Connection closed by invalid user admin [preauth]
+
+Die Diagnose: Das System erkennt sofort, wenn jemand versucht, sich als admin oder user einzuschleichen.
+Da Key-Authentication benötigt ist, schmettert das System sdie Raider sofort mit einem unbarmherzigen Permission denied (publickey) ab.
+
+Der Protokoll-Clash: Spannend ist der Fehler Protocol major versions differ: 2 vs. 1. Hier hat mein Vault-Scanner versucht, an den SSH-Bannern zu rütteln, sprach aber eine veraltete Sprache (SSHv1). Das System hat den Spion sofort blockiert!
+
+## 🤖 EXTRAKT 2: DER RECHTE-KAMPF & DAS MONITORING-PARADOXON
+
+⛔ Der PermissionError (Nginx Logs)
+
+Das System spuckte Gift und Galle: Permission denied: '/var/log/nginx/access.log'.
+
+## Die Lektion: Ich habe die "Robustheits-Philosophie" perfekt umgesetzt. Indem ich den Fehler abfängst, verhindert mein Code, dass das gesamte Terminal abstürzt, nur weil ein Sensor blockiert ist.
+
+## Sicherheits-Architektur: Es ist ein Feature, kein Bug, dass RangerJohnson dort nicht standardmäßig lesen darf. Dein Ansatz, die Ausnahme abzufangen oder ihn später kontrolliert der Gruppe adm hinzuzufügen.
+
+## 🌀 Das Monitoring-Paradoxon™
+
+Die Prozessliste verriet mich:
+
+882671 RangerJ+  20   0   95848  12932   6140 S   0.0   1.4   3:37.30 python3 Vault_Dashboard.py
+
+Wenn das Dashboard die CPU fressen will, um die CPU zu überwachen, befinden wir uns im echten Linux-Betrieb.
+Das System läuft stabil bei niedrigen 2.0% CPU, trotz des ständigen Renderings.
+
+## ⏱️ SYSTEM-SNAPSHOT: CRON-AUTOMATISIERUNG (19.05.2026)
+
+Die ersten automatisierten Späher (Cronjobs) ins Feld geschickt! Die Dateien ps_log.txt und top_log.txt wurden pünktlich um 10:00:01 generiert.
+
+## 📋 Taktischer Auszug der Geister-Prozesse (Kernel Threads)
+
+Die ps_log.txt zeigt Hunderte von Prozessen mit dem Status I (Idle) oder S (Sleeping) in eckigen Klammern:
+Plaintext
+
+root           2  0.0  0.0      0     0 ?        S    May02   0:00 [kthreadd]
+root          56  0.0  0.0      0     0 ?        S    May02   0:02 [kswapd0]
+
+## Was ist das? Das sind die Organe des Servers. kthreadd erzeugt Kernel-Prozesse, kswapd0 verwaltet den virtuellen Speicher, falls der RAM knapp wird. Sie verbrauchen 0.0% CPU und lauern im Hintergrund – wie getarnte Nightstalker.
+
+Der Zombie-Alarm: Die Auswertung meldet 1 zombie. Wenn man genau hinsiehst:
+
+    RangerJ+ 1878558  0.0  0.0      0     0 ?        Z    09:59   0:00 [sh] <zombie>
+
+Hier hat ein Cronjob einen Befehl (sh) abgesetzt, aber der Mutterprozess hat die Erfolgsmeldung noch nicht abgeholt. Ein digitaler Leichnam, der auf Aufräumung wartet. Ungefährlich, aber ein genialer Fund für dein Logbuch!
