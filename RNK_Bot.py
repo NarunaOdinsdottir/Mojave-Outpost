@@ -30,7 +30,7 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     health_emoji = "✅" if threat["system_health"] == "HEALTHY" else "⚠️"
 
     msg = (
-        f"🚨 *SIEM VAULT CORE REPORT*\n"
+        f"🚨 *SekuritronMK2 REPORT*\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"🛡️ *Threat Severity:* {sev_display}\n"
         f"🏥 *System Health:* {health_emoji} {threat['system_health']}\n"
