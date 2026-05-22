@@ -17,9 +17,9 @@ Diese Phase dreht sich um:
 ## 🟢 PHASE 1 – LOG INTELLIGENCE (The First Signals)
 Die Spurenlese (Log-Analyse)
 
-Ein guter Ranger starrt nicht nur in die Wüste, er liest den Sand. Du hast gelernt, die /var/log/auth.log zu entziffern – das schwarze Brett deines Outposts.
+Ein guter Ranger starrt nicht nur in die Wüste, er liest den Sand. Ich hab gelernt, die /var/log/auth.log zu entziffern – das schwarze Brett meines Outposts.
 
-📂 Ziel: SSH-Aktivität verstehen
+## 📂 Ziel: SSH-Aktivität verstehen
 
 Analysequelle:
 
@@ -33,39 +33,37 @@ grep "error" /var/log/auth.log
 SSH Protocol mismatches
 Logout errors
 Einzelne Authentifizierungsfehler
-🧠 Interpretation
+
+## 🧠 Interpretation
 Bots / Scanner erzeugen „Noise“
 Logs sind kein Debugging-Tool nur für Fehler
 Logs sind Verhaltensdaten
-🎮 Mini-Discovery
-
-Fragen, die du bereits indirekt beantwortest:
-
-Welche IPs tauchen wiederholt auf?
-Gibt es Cluster von Versuchen?
-Gibt es zeitliche Muster?
 
 ## 🟡 PHASE 2 – DETECTION THINKING (Rule Engine Prototype)
-🧠 Erste Sicherheitsregel
+
+## 🧠 Erste Sicherheitsregel
+
 IF failed_logins_from_ip > 5 → ALERT
+
 💡 Bedeutung
 
-Du hast hier gebaut:
-
-👉 Mini SIEM Logik (Security Information & Event Thinking)
+Ich habe mit dem RNK_Watcher zufällig das gebaut:
+## 👉 Mini SIEM Logik (Security Information & Event Thinking)
 
 🧩 Zielstruktur
 Input: auth.log
 Verarbeitung: IP Aggregation
 Output: Alert Event
+
 🎮 Mission Concept
 Pattern erkennen
 Schwellen definieren
 Alarm auslösen
-## 🔵 PHASE 3 – PYTHON SECURITY LAYER (Vault Integration)
-🧠 Architekturidee
 
-Du hast begonnen zu verbinden:
+## 🔵 PHASE 3 – PYTHON SECURITY LAYER (Vault Integration)
+
+## 🧠 Architekturidee zum RNK_Watcher
+Ich habe begonnen folgendes zu verbinden:
 
 🐍 Python Scripts
 📡 Log Files
@@ -73,20 +71,17 @@ Du hast begonnen zu verbinden:
 🧩 geplante Funktion
 def check_ssh_attacks():
     pass
-🔥 Ziel
+    
+## 🔥 Ziel
 Logs lesen
 IPs zählen
 Threshold triggern
 Alert senden
-📡 Erweiterungsidee
+
+## 📡 Erweiterungsidee
 Telegram Bot Integration
 Live Alerts
 Event-driven Security
-🧠 Bewertung
-
-Das ist bereits:
-
-SOC Lite Engineering
 
 ## 🔴 PHASE 4 – REAL WORLD FEEDBACK LOOP
 🚨 Erkenntnis:
@@ -136,37 +131,49 @@ nginx funktioniert intern
 Problem liegt im Netzwerk Layer
 
 ## 🟪 PHASE 7 – NETWORK SECURITY REALITY
+
 🔐 UFW Check
 sudo ufw status
+
 🚨 Erkenntnis
 Port 80 fehlte zunächst
 HTTP Zugriff blockiert
+
 🔧 Fix
 sudo ufw allow 80
+
 🧠 Security Model
 AWS Security Group → äußere Mauer
 UFW → innere Mauer
 nginx → Service Layer
 
 ## 🟧 PHASE 8 – WEB EVOLUTION (STATIC DASHBOARD)
+
 📦 Datei Transfer
 scp -i Mojave-Outpost.pem image.jpg RangerJohnson@IP:/home/
+
 📁 Deployment
 sudo cp image.jpg /var/www/html/
+
 🌐 Ziel
 Bilder & Assets in Web Root verfügbar
 Static Web Interface aufgebaut
 
 ## 🧠 PHASE 9 – PYTHON + WEB INTEGRATION BUG
+
 ❌ Problem 1
 ModuleNotFoundError: psutil
+
 🧠 Ursache
 Virtual Environment vs System Python mismatch
+
 ❌ Problem 2
 Permission denied /var/www/html
+
 🧠 Ursache
 Linux File Permissions
 Root-owned directory
+
 💡 Erkenntnis
 
 „Linux vergibt keine Ausnahmen – nur Rechte.“
@@ -189,7 +196,9 @@ Pattern recognition
 IP aggregation
 
 ## 🏜️ MOJAVE OUTPOST STATUS REPORT
-System	Status
+
+## System	Status
+
 IAM	✅ Stable
 EC2	✅ Running
 SSH	🔐 Hardened
@@ -199,6 +208,7 @@ Web Layer	🌐 Partial deployment
 Python Stack	🐍 Debugging phase
 
 ## 🚀 NEXT EVOLUTION PHASE
+
 🧪 Phase 10 Preview
 Live log streaming
 Real-time detection engine
@@ -230,17 +240,17 @@ Standort: Mojave-Ödland, RNK-Außenposten
 
 Um die Moral der Truppe zu stärken, wurde die visuelle Infrastruktur des Terminals aktualisiert.
 
-    Datentransfer: Versorgungsgüter (Bilder) wurden erfolgreich per SCP von der Basis in das Heimverzeichnis des Rangers verschoben.
+Datentransfer: Versorgungsgüter (Bilder) wurden erfolgreich per SCP von der Basis in das Heimverzeichnis des Rangers verschoben.
 
         scp -i XXX.pem BILD.jpg RangerJohnson@DEINE-IP:/home/RangerJohnson/
 
-    Web-Deployment: Die Assets wurden in das aktive Front-End-Archiv des Außenpostens verlegt:
+Web-Deployment: Die Assets wurden in das aktive Front-End-Archiv des Außenpostens verlegt:
 
         sudo cp /home/RangerJohnson/mojave.jpg /var/www/html/
 
 ## 🛡️ IAM-STRUKTUR: OPERATION „LEAST PRIVILEGE“ [10.05.2026]
 
-Wir haben die Befehlskette im Cloud-Sektor neu geordnet, um die Sicherheit zu maximieren und die Verantwortlichkeiten zu trennen.
+Ich habe die Befehlskette im Cloud-Sektor neu geordnet, um die Sicherheit zu maximieren und die Verantwortlichkeiten zu trennen.
 
 📋 Die neuen Einheiten:
 | Gruppe |Mitglied | Zugewiesene Berechtigungen (Policies) |
@@ -250,7 +260,7 @@ Wir haben die Befehlskette im Cloud-Sektor neu geordnet, um die Sicherheit zu ma
 | SecurityAudit | RangerGhost | "ReadOnlyAccess, CloudWatchReadOnlyAccess" |
 | Karawane | RoseCassidy | IAMUserChangePassword (Minimale Rechte) |
 
-Strategische Analyse:
+## Strategische Analyse:
 
     Identity Separation: Durch die Trennung von Dev, Audit und Standard-Usern wird das Risiko interner Sabotage minimiert.
     
@@ -260,17 +270,20 @@ Strategische Analyse:
 
 Das Dashboard ist jetzt kein einfaches Skript mehr, sondern ein echter Linux-Hintergrunddienst (systemd).
 
-🔧 Der Kampf mit dem System-Daemon
+## 🔧 Der Kampf mit dem System-Daemon
 
 Der Weg zur stabilen Überwachung war steinig, wie die Terminal-Logs zeigen:
 
-    Fehlzündung (Unit not found): Ein Ordner wurde fälschlicherweise als .service benannt. Dieser wurde mit sudo rmdir RNK_Watcher.service entfernt.
+    Fehlzündung (Unit not found): Ein Ordner wurde fälschlicherweise als .service benannt. 
+    Dieser wurde mit sudo rmdir RNK_Watcher.service entfernt.
 
-    Das psutil-Gespenst: Das System meldete ModuleNotFoundError: No module named 'psutil'.
+Das psutil-Gespenst: Das System meldete ModuleNotFoundError: No module named 'psutil'.
 
         Ursache: Der Dienst nutzte das globale Python statt der isolierten Umgebung (venv).
 
-    Der finale Fix: Die RNK_Watcher.service wurde so konfiguriert, dass sie das Python-Executable direkt aus dem venv startet.
+## Der finale Fix: 
+
+        Die RNK_Watcher.service wurde so konfiguriert, dass sie das Python-Executable direkt aus dem venv startet.
 
 ## 🟢 Status: ACTIVE (RUNNING)
 
@@ -331,9 +344,12 @@ System-Vibe: Ein sattes Terminal-Grün flackert über den Bildschirm... 🟢
 
 ## 🛠️ DEBRIEFING: DIE CHRONIKEN DES WIDERSTANDS
 
-Ranger, das ist kein einfaches Logbuch mehr – das ist das Einsatztagebuch eines Cyber-Scouts, der das Ödland zähmt. Der Sprung von "Ich lasse mal ein Skript laufen" zu "Ich provoziere absichtlich Angriffe, um meine Abwehr zu testen" ist geschafft. Das ist der Kern von SecOps!
+Ranger, das ist kein einfaches Logbuch mehr – das ist das Einsatztagebuch eines Cyber-Scouts, der das Ödland zähmt. 
+
+Der Sprung von "Ich lasse mal ein Skript laufen" zu "Ich provoziere absichtlich Angriffe, um meine Abwehr zu testen" ist geschafft. Das ist der Kern von SecOps!
 
 Hier ist die  Einordnung Experimente und der gewonnenen Telemetrie:
+
 ## 🔍 EXTRAKT 1: DAS INTERNATIONALE GEPLÄNKEL (14.05.2026)
 
 Aus dem Labor heraus kontrollierte Angriffe auf das Terminal gestartet. Die Ergebnisse zeigen, dass die Sensoren scharf geschaltet sind.
