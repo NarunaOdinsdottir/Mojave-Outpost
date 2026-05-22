@@ -410,3 +410,89 @@ Der Zombie-Alarm: Die Auswertung meldet 1 zombie. Wenn man genau hinsiehst:
     RangerJ+ 1878558  0.0  0.0      0     0 ?        Z    09:59   0:00 [sh] <zombie>
 
 Hier hat ein Cronjob einen Befehl (sh) abgesetzt, aber der Mutterprozess hat die Erfolgsmeldung noch nicht abgeholt. Ein digitaler Leichnam, der auf Aufräumung wartet. Ungefährlich, aber ein genialer Fund für das Logbuch!
+
+# ☢️ MOJAVE OUTPOST: LOGBUCH-EINTRAG [22.05.2026]
+
+Verschlüsselungsebene: RNK-Kommando-Ebene (Erhöhte Priorität)
+Status: Securitron-Protokoll online | Netzwerk-Anomalie geklärt 📡
+
+## 🛠️ DIE ENTWICKLUNG: SECURITRON MK2 GEHT LIVE
+
+Ranger, du hast den Bot von einem Skript, das man manuell im Terminal anschubsen muss, in einen echten Linux-Systemdienst (Systemd Service) verwandelt.
+
+Das bedeutet: Wenn der Server abstürzt oder neu startet, steht dein Securitron von alleine wieder auf. Das ist echtes Production-Level-Engineering im DevOps-Ödland!
+
+## 🔍 DETEKTIV-ARBEIT: DER FEHLER IM JOURNAL (POST-MORTEM)
+
+Schauen wir uns das journalctl-Log an. Da steckte ein brutaler Loop drin, der aber glücklicherweise gezähmt ist. Schau mal hier:
+
+    restart counter is at 16180
+
+16.180 Neustarts! Das System hat in einer mörderischen Dauerschleife versucht, den Bot wiederzubeleben. Warum? Das Journal verrät es uns messerscharf:
+
+Unable to locate executable '/home/RangerJohnson/RNK_Watcher/SecuritronMK2.py/venv/bin/python': Not a directory
+Failed at step EXEC spawning ...: Not a directory
+Main"* process exited, code=exited, status=203/EXEC
+
+## 🧠 Die Ursache
+
+In meiner ersten Service-Konfiguration hattest ich den Pfad verdreht. Ich hab versucht, den Python-Interpreter innerhalb meines Skript-Namens aufzurufen (.../SecuritronMK2.py/venv/bin/python). Systemd hat völlig korrekt gemeckert: "Hey, SecuritronMK2.py ist eine Datei, kein Ordner!" Das führte zum berüchtigten Fehler status=203/EXEC (Ausführung fehlgeschlagen).
+
+## ✅ Die Korrektur
+
+Die finale Service-Datei im Log ist dagegen besser:
+
+    ExecStart=/home/RangerJohnson/RNK_Watcher/venv/bin/python /home/RangerJohnson/RNK_Watcher/SecuritronMK2.py
+    
+    Hier nehme ich das Python-Executable aus der virtuellen Umgebung (venv) und übergebe das Skript als Argument. 
+    Seit dem daemon-reload läuft der Dienst stabil (Active: active (running)).
+
+## 🕵️ ERKENNTNIS: WARUM DIE FAKE-LOGINS NICHT GEGRIFFEN HABEN
+
+Ich hab mich gewundert, warum meine gefälschten Angriffe mit admin und RangerGhost den Monitor nicht getriggert haben, obwohl sie im auth.log auftauchen:
+
+Connection closed by invalid user admin 31.17.254.29 port 11752 [preauth]
+
+Hier kommt die feine Klinge der Log-Analyse ins Spiel. Wenn mein Skript im Code nach dem Wort "failed" oder "Failed" sucht, läuft es ins Leere! Bei SSH-Verbindungsversuchen ohne passenden Schlüssel (oder mit falschem User bei reinem Key-Auth) schreibt Ubuntu oft ausschließlich:
+
+    Invalid user [...]
+
+    Connection closed by invalid user [...] [preauth]
+
+## 🔧 Taktischer Code-Schnittstelle:
+
+Damit mein Monitor anspringt, muss mein Python-Skript in der /var/log/auth.log explizit nach den Strings "Invalid user" oder "Connection closed by invalid user" suchen!
+
+## 🌪️ DAS NETZWERK-PARADOXON: „NO ROUTE TO HOST“
+
+Der Schreckmoment: Die Tastatur friert ein, die Verbindung reißt ab, und das Terminal spuckt aus:
+ssh: connect to host 98.83.108.196 port 22: No route to host
+
+## 💡 Diagnose & Entwarnung
+
+Mein erster Impuls war klassische System-Paranoia: "Ist AWS down? Habe ich den Server gegrillt?" Die Fehlermeldung No route to host ist hierbei mein bester Freund für die Ursachenforschung. Sie bedeutet, dass dein lokaler Rechner überhaupt keinen Pfad ins Internet aufbauen konnte, um die IP des Mojave Outposts überhaupt zu erreichen.
+
+Wäre der Server down oder die Firewall (Security Group) falsch konfiguriert gewesen, hätte ich einen Connection timeout oder Connection refused bekommen. Dass mein WLAN abgeschmiert ist, passt also exakt zur Fehlermeldung. 
+Entwarnung: Mein Cloud-Server läuft sicher weiter! Mojave Outpost ist sicher ( noch...)
+
+## 📊 RECAP: DEIN PIP-BOY STATUS-BEREICH
+
+Mein Server-Log zeigt extrem gesunde Vitalwerte:
+
+    Temperature: -273.1 °C 🧊 (Der absolute Nullpunkt – dein AWS-Treiber liest hier mangels Hardware-Sensor Unsinn aus, aber hey: Besser gut gekühlt als Kernschmelze!)
+
+    Processes: 121 | Zombie: 1 🧟 (Der eine Zombie-Prozess aus den Cronjobs von letzter Woche geistert immer noch rum – keine Sorge, der frisst kein Gehirn/RAM).
+
+    Memory usage: 32% 🧠 (Massig Platz für den Securitron-Bot).
+
+## 🛠️ Mein Admin-Spickzettel für die Hosentasche:
+
+Wenn du Code-Änderungen am Bot machst, merke dir diese Kette:
+
+    sudo nano /home/RangerJohnson/RNK_Watcher/SecuritronMK2.py (Code anpassen)
+
+    sudo systemctl restart securitron.service (Bot neu laden)
+
+    sudo journalctl -u securitron.service -f (Prüfen, ob er fehlerfrei hochfährt)
+
+Der Securitron MK2 hält jetzt die Stellung, während du dein Terminal schließt. Das Ödland wird sicherer! 🫡🤖🌵
