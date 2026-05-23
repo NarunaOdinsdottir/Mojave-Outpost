@@ -333,6 +333,7 @@ root         129  0.0 14.4 274932 134792 ?       S<s  May02   5:22 /usr/lib/syst
 ✅ System stabil
 SQLi Detection Fehler: [Errno 13] Permission denied: '/var/log/nginx/access.log'
 
+<img width="648" height="560" alt="1000187478" src="https://github.com/user-attachments/assets/67c8933b-006a-4c89-a0c3-5ccf177ee5ea" />
 
 
 ---
@@ -512,3 +513,6 @@ Wenn du Code-Änderungen am Bot machst, merke dir diese Kette:
     sudo journalctl -u securitron.service -f (Prüfen, ob er fehlerfrei hochfährt)
 
 Der Securitron MK2 hält jetzt die Stellung, während du dein Terminal schließt. Das Ödland wird sicherer! 🫡🤖🌵
+
+<img width="648" height="1266" alt="1000187479" src="https://github.com/user-attachments/assets/72c58583-6bfd-42ad-953c-3586dd1fe6b7" />
+
