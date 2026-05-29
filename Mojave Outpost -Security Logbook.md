@@ -600,3 +600,19 @@ Bash
 ssh -4 -i Mojave-Outpost.pem RangerJohnson@98.83.108.196
 
 Logbuch-Eintrag geschlossen. Die Verbindung steht wieder, die Verteidigungsanlagen des Vaults laufen stabil im Hintergrund. Hervorragende Detektivarbeit im System-Unterholz, Ranger! 🫡🛡️🤖🏜️
+
+# 🧷 „Detection Rule für die Zukunft“
+
+## 🧠 PREVENTION (Lesson Learned)
+
+- AWS Security Groups mit /32 sind fragile Single-Point-of-Failure
+- Bei dynamischer IP:
+  → immer IP vor SSH prüfen
+  → oder VPN / bastion / SSM nutzen
+
+Oder noch besser:
+
+👉 „Selbstschutz-Regel“
+
+Vor jeder SG-Änderung:
+curl -4 ifconfig.me
