@@ -562,7 +562,7 @@ Bash
 TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" ...)
 curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/
 
-Ergebnis: IMDS lieferte alle Daten. Die Instanz war kerngesund. Der anschließende tcpdump-Befehl bestätigte das finale Urteil: Während Port 80-Pakete fröhlich einschlugen, kam auf Port 22 rein gar nichts auf dem Interface an. AWS hat den Traffic gefiltert, noch bevor er das Betriebssystem erreichen konnte.
+Ergebnis: IMDS lieferte alle Daten. Die Instanz war kerngesund. Der anschließende tcpdump-Befehl bestätigte das finale Urteil: Während Port 80-Pakete fröhlich einschlugen, kam auf Port 22 rein gar nichts auf dem Interface an. AWS hat den Traffic gefiltert, noch bevor er das Betriebssystem erreichen konnte. SSH SYN-Pakete erreichten das Interface nicht → Filterung auf AWS Security Group / NACL Ebene wahrscheinlich
 
 ## 💡 ERKENNTNIS & LÖSUNG
 
