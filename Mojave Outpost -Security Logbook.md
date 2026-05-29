@@ -516,3 +516,87 @@ Der Securitron MK2 hält jetzt die Stellung, während du dein Terminal schließt
 
 <img width="648" height="1266" alt="1000187479" src="https://github.com/user-attachments/assets/72c58583-6bfd-42ad-953c-3586dd1fe6b7" />
 
+# ☢️ MOJAVE OUTPOST: LOGBUCH-EINTRAG [29.05.2026]
+
+Verschlüsselungsebene: RNK-Kommando-Ebene (Troubleshooting-Protokoll)
+Missions-Status: Das Rätsel der verrammelten Vault-Tür ist gelöst! 🔐⚡
+## 🛰️ REKAPITULATION: DAS TROUBLESHOOTING-PROJEKT vom 27.05.26
+
+Ranger, das war eine absolute Lehrbuch-Sitzung in digitaler Spurensuche. Ich standest vor dem absoluten Albtraum jedes Cloud-Admins: Der Server lebt, das Web-Dashboard atmet, aber die SSH-Zugangsbrücke (Port 22) ist komplett oben. Hier ist die chronologische Rekonstruktion meiner taktischen Analyse, die mich Schritt für Schritt aus dem Nebel geführt hat.
+
+## 🔍 DIE SCHRITT-FÜR-SCHRITT-ANALYSE
+
+1. Das Symptom & Erste Gegenmaßnahmen
+
+Dein Terminal spuckte plötzlich eine Wand aus:
+ssh: connect to host 98.83.108.196 port 22: Connection timed out
+Erste Reflexe : WLAN geprüft, Browser-Check – das Dashboard auf Port 80 läuft stabil. Ergo: Der Server ist nicht down.
+
+2. Der Einsatz von „Nachtatem“ (Der Portscan)
+
+Um Gewissheit zu erlangen, hast du deinen Python-Portscanner auf das System angesetzt. Das Ergebnis von Drachen-Fullscan war eindeutig:
+
+    🔥 Port 80 (HTTP/Nginx): OPEN (Eine klaffende Wunde...)
+
+    ❌ Port 22 (SSH): FILTERED / TIMEOUT
+
+An dieser Stelle hast du messerscharf den Unterschied erkannt: Es war kein Connection refused (was bedeuten würde, der Server sagt aktiv "Nein, mein SSH-Dienst läuft nicht"), sondern ein Timeout. Das Paket geht raus, aber die Antwort wird stillschweigend im Ödland vergraben.
+
+3. Der tiefe Fallstrick: Das IP-Chamäleon 🦎
+
+Beim Abfragen deiner lokalen Netzwerk-Daten kam die harte Wahrheit ans Licht:
+
+    🌍 Frühere IP: 31.17.254.29
+
+    🌍 Aktuelle IP: 31.17.254.74
+
+    🌐 IPv6 zusätzlich aktiv: 2a02:8109:...
+
+Dein Internetanbieter (ISP) hat dir unbemerkt eine neue IPv4-Adresse zugewiesen. Da deine AWS Security Group (sg-0b8b1e931ba64a86d) wie ein extrem scharfer Türsteher konfiguriert war, der nur Zugriffe von deiner exakten, alten IP (/32) erlaubt, standest du plötzlich auf der Blacklist!
+
+4. Die Entmystifizierung via IMDSv2 und tcpdump
+
+Um auszuschließen, dass der AWS-Netzwerk-Stack oder Linux intern spinnt, hast du den AWS Metadata Service (IMDSv2) via Token-Abfrage vermessen:
+Bash
+
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" ...)
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/
+
+Ergebnis: IMDS lieferte alle Daten. Die Instanz war kerngesund. Der anschließende tcpdump-Befehl bestätigte das finale Urteil: Während Port 80-Pakete fröhlich einschlugen, kam auf Port 22 rein gar nichts auf dem Interface an. AWS hat den Traffic gefiltert, noch bevor er das Betriebssystem erreichen konnte.
+
+## 💡 ERKENNTNIS & LÖSUNG
+
+Das DevSecOps-Paradoxon: "Ich habe meinen Server so unfassbar sicher gegen Angreifer gemacht, dass er jetzt auch absolut sicher vor mir selbst ist." 😄
+
+Am Ende war es keine Geistererscheinung im SSH-Dienst und kein Defekt im Linux-Kernel, sondern die pure, unbestreitbare Präzision der AWS Security Group Inbound Rules in Kombination mit einer dynamischen IP-Änderung deines Routers.
+
+## 🛠️ NOTFALL-PROTOKOLL FÜR DAS NÄCHSTE MAL
+
+Falls dich der AWS-Türsteher mal nicht reinlassen will, ist das hier deine offizielle RNK-Rettungsroute:
+
+## Schritt 1: Aktuelle IP ermitteln
+
+Bash
+
+curl -4 ifconfig.me
+
+## Schritt 2: Security Group via AWS-CLI (oder Handy-Konsole) patchen
+
+Anstatt die Gruppe komplett blind zu öffnen, aktualisierst du die SSH-Regel einfach auf deine neue IP:
+Bash
+
+aws ec2 authorize-security-group-ingress \
+    --region us-east-1 \
+    --group-id sg-0b8b1e931ba64a86d \
+    --protocol tcp \
+    --port 22 \
+    --cidr $(curl -s ifconfig.me)/32
+
+## Schritt 3: Der IPv4-Erzwingungs-Befehl
+
+Falls dein Router versucht, heimlich über IPv6 zu tunneln, zwingst du SSH mit dem Flag -4 auf die erlaubte IPv4-Schiene:
+Bash
+
+ssh -4 -i Mojave-Outpost.pem RangerJohnson@98.83.108.196
+
+Logbuch-Eintrag geschlossen. Die Verbindung steht wieder, die Verteidigungsanlagen des Vaults laufen stabil im Hintergrund. Hervorragende Detektivarbeit im System-Unterholz, Ranger! 🫡🛡️🤖🏜️
