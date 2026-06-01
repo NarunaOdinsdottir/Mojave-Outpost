@@ -616,3 +616,128 @@ Oder noch besser:
 
 Vor jeder SG-Änderung:
 curl -4 ifconfig.me
+
+# ☢️ MOJAVE OUTPOST: LOGBUCH-EINTRAG [30.05. – 01.06.2026]
+
+Verschlüsselungsebene: RNK-Kommando-Ebene (SIEM & Securitron-Wartungspfad)
+Missions-Status: Operation "Kuckucksei" erfolgreich abgeschlossen. Das Überwachungstool sieht wieder alles, und der Bot ist gezähmt! 🛠️🤖
+
+## 🛑 ABSCHNITT 1: DER KAMPF UM DIE LOG-BERECHTIGUNGEN (30.05.2026)
+
+Der Mojave Outpost drohte, blind für Angriffe zu werden. Beim Umzug des Monitoring-Tools auf die AWS EC2-Instanz schlug das Linux-Rechtesystem unbarmherzig zu:
+Plaintext
+
+PermissionError: [Errno 13] Permission denied: '/var/log/nginx/access.log'
+
+## 🧠 Taktische Lagebeurteilung
+
+Unter Linux gehört /var/log/nginx/ standardmäßig dem System-User www-data und der Gruppe adm. Unser Dienst-Account RangerJohnson wurde eiskalt ausgesperrt.
+
+## 🛠️ Die Instandsetzung (Der ACL-Weg)
+
+Da die Brecheisen-Methode (sudo) aus Security-Sicht ein absolutes No-Go für ein Überwachungsskript ist, wurde der chirurgisch sauberste Weg gewählt: Access Control Lists (ACL).
+
+Problem im Ödland: Schlanke Cloud-Images haben die ACL-Werkzeuge oft nicht vorinstalliert. Das System verweigerte zuerst den Befehl.
+
+Lösung: Nachinstallation der Tools und gezielte Rechtevergabe für den Lese-Zugriff:
+
+Bash
+
+sudo apt update && sudo apt install acl -y
+
+## Gezielte Leserechte auf das gesamte Nginx-Log-Verzeichnis vergeben
+
+sudo setfacl -R -m u:RangerJohnson:rx /var/log/nginx/
+
+## 💀 ABSCHNITT 2: DER CODE-EXORZISMUS (DEAD CODE)
+
+Beim Review der Vault_monitor.py wurde ein logischer Sabotage-Akt aufgedeckt. In der Funktion get_report() lag die Terminal-Ausgabe hinter der return-Anweisung:
+Python
+
+    return {
+        "timestamp": timestamp,
+        # ... (dein Dictionary)
+    }
+    # 3. Ausgabe <--- DIESER BLOCK WAR TOTER CODE!
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"\n📊 Vault Status Report [{timestamp}]")
+
+Erkenntnis: Sobald Python auf ein return stößt, lässt es alles stehen und liegen und verlässt die Funktion. Die Terminal-Ausgabe wurde komplett verschluckt.
+Fix: Der Ausgabe-Block wurde radikal aus get_report() extrahiert und sauber in die main()-Funktion von Vault_monitor.py verlegt, wo er hingehört.
+
+## 🤖 ABSCHNITT 3: DIE PERSÖNLICHKEITSSPALTUNG VON SECURITRON MK2
+
+Der Bot weigerte sich, seinen Dienst auf Telegram stabil aufzunehmen. Das Log lief im Sekundentakt mit kritischen Fehlern heiß:
+Plaintext
+
+telegram.error.Conflict: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+## 🕵️‍♂️ Die Spurensuche im System
+
+Ein 409 Conflict bedeutet: Zwei Instanzen nutzen dasselbe API-Token. Nachdem die Main.py (die alle 5 Minuten mit einem unsauberen asyncio.run() reingefunkt hatte) deaktiviert und alte Prozesse via pkill eliminiert wurden, tauchte die Zeile im Terminal immer noch doppelt auf:
+Plaintext
+
+📢 SIEM Telegram Push-Notification Loop aktiv...
+📢 SIEM Telegram Push-Notification Loop aktiv...
+
+## 🎯 Die Enttarnung des wahren Saboteurs
+
+Der Test via inspect.stack() zeigte, dass das Skript manuell nur einmal geladen wurde. Ein kosmetischer Doppel-Print im asynchronen post_init wurde sofort durch eine globale Sperre (_LOOP_STARTED = True) abgefangen. Und trotzdem knallte der Conflict weiter!
+
+Dann der entscheidende Befehl:
+Bash
+
+systemctl list-units --type=service | grep -iE "bot|securitron|watcher"
+
+Treffer! Ein alter securitron.service nistete sich tief im Systemd-Verzeichnis ein. Er wurde beim Booten gestartet und hielt das Telegram-Token im Hintergrund eisern gefesselt. Jedes manuelle Starten im Terminal war ein direkter Angriff auf sein Revier.
+
+## 🦾 AMPUTATION & UPGRADE AUF MK2 (01.06.2026)
+
+Um die alte Software-Ruine endgültig zu begraben und Securitron auf den modernen ApplicationBuilder inklusive run_polling() umzustellen, wurde die Systemd-Konfiguration umgeschrieben.
+
+📜 Das neue Dienst-Protokoll (/etc/systemd/system/securitron.service)
+Ini, TOML
+
+[Unit]
+Description=Securitron MK2 SIEM Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=RangerJohnson
+WorkingDirectory=/home/RangerJohnson/RNK_Watcher
+ExecStart=/home/RangerJohnson/RNK_Watcher/venv/bin/python3 SecuritronMK2.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+⚡ Die Reaktivierungs-Sequenz im Terminal
+Bash
+
+## 1. Den alten, blockierenden Hintergrund-Dienst stoppen
+sudo systemctl stop securitron.service
+
+## 2. Systemd die geänderte Service-Datei einlesen lassen
+sudo systemctl daemon-reload
+
+## 3. Den neuen Securitron MK2 dauerhaft im Hintergrund starten
+sudo systemctl start securitron.service
+
+## 4. Den automatischen Start bei System-Boot aktivieren
+sudo systemctl enable securitron.service
+
+## 📊 ABSCHLUSS-BERICHT
+
+Die Überprüfung mit sudo systemctl status securitron.service meldet ein makelloses active (running).
+
+Die ACL-Rechte greifen: Nginx-Logs werden fehlerfrei analysiert.
+
+Die zirkulären Importe und die Main.py sind eliminiert.
+
+Die manuelle Abfrage via /status vom Smartphone liefert die Live-Werte direkt aus dem Vault.
+
+Der doppelte Print beim post_init ist dank der Singleton-Sperre im Code harmlos und nur ein kosmetisches Überbleibsel der Netzwerk-Initialisierung. Der Bot steht, hält die Stellung und funkt Alarme sauber durch!
+
+Logbuch-Eintrag Ende. Ad Victoria... äh, der Outpost ist sicher! 🏜️ Guard-Dienst läuft fehlerfrei.
