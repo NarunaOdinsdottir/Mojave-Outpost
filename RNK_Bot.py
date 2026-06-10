@@ -2,7 +2,6 @@ import asyncio
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
-# Wir importieren den neuen Updater und die SIEM-Statusfunktionen
 from RNK_Adapter import start_updater, get_siem_status, get_current_report
 
 # --- CONFIGURATION ---
