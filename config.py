@@ -5,9 +5,11 @@ DISK_LIMIT = 90
 
 # Sicherheits-Muster (Hier fügst du einfach neue Begriffe hinzu!)
 SSH_FAIL_PATTERNS = [
-    r"Failed password",
+    r"failed password",
     r"invalid user",
-    r"Connection closed by authenticating user"
+    r"connection closed by authenticating user",
+    r"error",
+    r"Connection closed by invalid user",
 ]
 
 SQLI_PATTERNS = [
