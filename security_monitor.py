@@ -10,8 +10,11 @@ def get_failed_logins():
     """Liest SSH-Logs und filtert flexibel nach der Pattern-Liste."""
     try:
         # Wir holen uns die Logs der letzten 24h OHNE grep, das macht jetzt Python!
-        output = subprocess.getoutput("journalctl -u ssh --since '24h ago' --no-pager")
-        
+        output = subprocess.getoutput("journalctl -u ssh -u sshd --since '24h ago' --no-pager")
+
+        if not output or "No journal files were found" in output:
+            return Counter(), None
+            
         ips = []
         # Zeile für Zeile durchgehen (schont den RAM bei großen Logs)
         for line in output.splitlines():
