@@ -3,7 +3,6 @@ import re
 from collections import Counter
 from config import SSH_FAIL_PATTERNS, SQLI_PATTERNS
 
-# Kombiniert die Listen-Einträge zu einem einzigen Regex: (Muster1|Muster2|Muster3)
 SSH_REGEX = re.compile("|".join(SSH_FAIL_PATTERNS), re.IGNORECASE)
 
 def get_failed_logins():
