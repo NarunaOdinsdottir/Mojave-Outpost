@@ -1,147 +1,144 @@
 import asyncio
+import requests
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
-from RNK_Adapter import start_updater, get_siem_status, get_current_report
 
-# --- CONFIGURATION ---
-TELEGRAM_TOKEN = "DEIN_TELEGRAM_TOKEN"
-CHAT_ID = "DEINE_CHAT_ID"
+# --- KONFIGURATION ---
+TELEGRAM_TOKEN = "DEIN_BOT_TOKEN_HIER"
+CHAT_ID = 123456789  
+CHECK_INTERVAL = 5   
 
-# Wie oft der Bot prüft, ob das SIEM neue Angriffe in der History aufgezeichnet hat
-CHECK_INTERVAL = 5  
+API_URL = "http://127.0.0.1:8000/api/v1/status"
+
+def fetch_siem_state_from_api():
+    """Fragt den aktuellen Zustand per HTTP-Schnittstelle ab."""
+    try:
+        response = requests.get(API_URL, timeout=2)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.RequestException:
+        # API-Server temporär offline oder startet gerade noch
+        return None
+    return None
 
 
-# --- BOT COMMANDS (Manuelle Abfrage vom Handy) ---
+# --- BOT COMMANDS ---
 
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Liefert auf Befehl (/status) den aktuellen SIEM-Zustand ans Handy."""
-    siem_status = get_siem_status()
-    raw_report = get_current_report()
+    """Holt den Status live über die API-Schnittstelle."""
+    data = fetch_siem_state_from_api()
     
-    threat = siem_status["threat_state"]
-    metrics = siem_status["metrics"]
+    if not data:
+        await update.message.reply_text("❌ SIEM-API antwortet nicht. Läuft die RNK_Adapter.py?")
+        return
+        
+    threat = data["threat_state"]
+    metrics = data["metrics"]
+    stats = data.get("system_stats", {"cpu": 0, "ram": 0, "disk": 0})
+    warnings = data.get("latest_raw_warnings", [])
     
-    # Emoji-Auswahl basierend auf der SIEM-Severity
     severity_emojis = {"LOW": "🟢 LOW", "MEDIUM": "🟡 MEDIUM", "HIGH": "🟠 HIGH", "CRITICAL": "🔴 CRITICAL"}
     sev_display = severity_emojis.get(threat["current_severity"], threat["current_severity"])
-    
     health_emoji = "✅" if threat["system_health"] == "HEALTHY" else "⚠️"
 
     msg = (
-        f"🚨 *SekuritronMK2 REPORT*\n"
+        f"🚨 <b>Victors Server REPORT</b>\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
-        f"🛡️ *Threat Severity:* {sev_display}\n"
-        f"🏥 *System Health:* {health_emoji} {threat['system_health']}\n"
-        f"⏱️ Letztes Update: `{threat['last_updated']}`\n\n"
-        f"📊 *SIEM Metriken (Seit Start):*\n"
-        f"• Scans verarbeitet: `{metrics['total_scans_performed']}`\n"
-        f"• SSH Angriffe blockiert: `{metrics['total_ssh_failed_detected']}`\n"
-        f"• SQLi Angriffe blockiert: `{metrics['total_sqli_detected']}`\n"
-        f"• Stummgeschaltete Alarme: `{metrics['alerts_muted_by_cooldown']}`\n\n"
+        f"🛡️ <b>Threat Severity:</b> {sev_display}\n"
+        f"🏥 <b>System Health:</b> {health_emoji} {threat['system_health']}\n"
+        f"⏱️ Letztes Update: <code>{threat['last_updated']}</code>\n\n"
+        f"🖥️ <b>Hardware Auslastung:</b>\n"
+        f"CPU: <code>{stats['cpu']}%</code> | RAM: <code>{stats['ram']}%</code> | DISK: <code>{stats['disk']}%</code>\n\n"
     )
     
-    # System-Leistungswerte anhängen, falls verfügbar
-    if raw_report:
-        msg += (
-            f"🖥️ *Hardware Auslastung:*\n"
-            f"CPU: `{raw_report['cpu']}%` | RAM: `{raw_report['ram']}%` | DISK: `{raw_report['disk']}%`\n\n"
-        )
-        if raw_report.get("warnings"):
-            msg += "⚠️ *Hardware Warnungen:*\n" + "\n".join([f"• {w}" for w in raw_report["warnings"]]) + "\n\n"
-
-    # Die letzten 3 Angriffe aus der bereinigten SIEM-History anzeigen
-    history = siem_status["attack_history"]
-    if history:
-        msg += "🎯 *Letzte SIEM Incidents:*\n"
-        for incident in list(history)[-3:]:  # Zeige die letzten 3
-            msg += f"• `[{incident['type']}]` von IP: `{incident['source']}` ({incident['severity']})\n"
+    if warnings:
+        msg += "⚠️ <b>System-Warnungen:</b>\n" + "\n".join([f"• {w}" for w in warnings]) + "\n\n"
     else:
-        msg += "✅ Keine aktiven Vorfälle in der History."
+        msg += "✅ Hardware-Status im grünen Bereich.\n\n"
 
-    # Senden mit MarkdownV2-Unterstützung für saubere Formatierung (z.B. Codeblocks bei IPs)
-    await update.message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
+    msg += (
+        f"📊 <b>SIEM Metriken:</b>\n"
+        f"• Scans verarbeitet: <code>{metrics['total_scans_performed']}</code>\n"
+        f"• SSH Angriffe blockiert: <code>{metrics['total_ssh_failed_detected']}</code>\n"
+        f"• SQLi Angriffe blockiert: <code>{metrics['total_sqli_detected']}</code>\n"
+        f"• Stummgeschaltete Alarme: <code>{metrics['alerts_muted_by_cooldown']}</code>\n\n"
+    )
+    
+    history = data.get("attack_history", [])
+    if history:
+        msg += "🎯 <b>Letzte SIEM Incidents:</b>\n"
+        for incident in list(history)[-3:]:  
+            msg += f"• <code>[{incident['type']}]</code> von IP: <code>{incident['source']}</code> ({incident['severity']})\n"
+    else:
+        msg += "✅ Howdy Partner! Keine aktiven Vorfälle in der History. Die Vault ist gesichert."
+
+    await update.message.reply_text(msg, parse_mode=ParseMode.HTML)
 
 
 # --- AUTOMATISCHE ALARMIERUNG (Hintergrund-Task) ---
 
 async def alert_monitor_loop(app):
-    """
-    Überwacht die SIEM Attack History. Sobald ein neuer, ungesehener
-    Alarm vom SIEM generiert wird, pusht der Bot ihn aufs Handy.
-    """
-    # Wir merken uns, wie viele Alarme wir bereits gesendet haben
-    last_sent_count = 0
+    """Überwacht die API auf neue, ungesehene Angriffe."""
+    print("📢 Securitron API-Push Loop aktiv...")
     
-    # Kurz warten, bis der SIEM-Adapter warme Daten hat
+    # Spam-Schutz beim Initialisieren abrufen
+    initial_data = fetch_siem_state_from_api()
+    if initial_data and "attack_history" in initial_data:
+        last_sent_count = len(initial_data["attack_history"])
+        print(f"ℹ️ Bot mit {last_sent_count} bekannten Vorfällen synchronisiert.")
+    else:
+        last_sent_count = 0
+    
     await asyncio.sleep(2)
-    
-    print("📢 SIEM Telegram Push-Notification Loop aktiv...")
     
     while True:
         try:
-            siem_status = get_siem_status()
-            history = siem_status["attack_history"]
-            current_count = len(history)
-            
-            # Wenn die History gewachsen ist, gibt es neue, verarbeitete Alarme!
-            if current_count > last_sent_count:
-                # Hole alle Alarme, die seit dem letzten Check dazugekommen sind
-                new_alerts = list(history)[last_sent_count:current_count]
+            data = fetch_siem_state_from_api()
+            if data and "attack_history" in data:
+                history = data["attack_history"]
+                current_count = len(history)
                 
-                for alert in new_alerts:
-                    msg = (
-                        f"🔥 *🔥 SIEM DETECTED INCIDENT 🔥*\n"
-                        f"━━━━━━━━━━━━━━━━━━━━\n"
-                        f"🚨 *Typ:* `{alert['type']}`\n"
-                        f"🛑 *Severity:* {alert['severity']}\n"
-                        f"🌐 *Quelle:* `{alert['source']}`\n"
-                        f"📅 *Zeit:* {alert['timestamp']}\n\n"
-                        f"📝 *Beschreibung:* \n_{alert['description']}_\n"
-                    )
-                    await app.bot.send_message(chat_id=CHAT_ID, text=msg, parse_mode=ParseMode.MARKDOWN)
-                
-                last_sent_count = current_count
-                
+                if current_count > last_sent_count:
+                    new_alerts = history[last_sent_count:current_count]
+                    
+                    for alert in new_alerts:
+                        msg = (
+                            f"🔥 <b>Vault-Tec DETECTED INCIDENT (API)</b> 🔥\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"🚨 <b>Typ:</b> <code>{alert['type']}</code>\n"
+                            f"🛑 <b>Severity:</b> {alert['severity']}\n"
+                            f"🌐 <b>Quelle:</b> <code>{alert['source']}</code>\n"
+                            f"📅 <b>Zeit:</b> {alert['timestamp']}\n\n"
+                            f"📝 <b>Beschreibung:</b> \n<i>{alert['description']}</i>"
+                        )
+                        await app.bot.send_message(chat_id=CHAT_ID, text=msg, parse_mode=ParseMode.HTML)
+                    
+                    last_sent_count = current_count
+                    
         except Exception as e:
-            print(f"Fehler im Bot Push-Loop: {e}")
+            print(f"Fehler im API-Bot Loop: {e}")
             
-        # Kurze Pause bis zum nächsten Check der SIEM-History
         await asyncio.sleep(CHECK_INTERVAL)
 
 
 # --- BOT START SEQUENCE ---
 
 async def main():
-    # 1. Starte den SIEM-Core im Hintergrund (deinen neuen adapter.py Updater)
-    print("⚙️ Starte SIEM-Core Hintergrund-Updater...")
-    start_updater()
-    
-    # 2. Telegram Bot initialisieren
+    print("🤖 Securitron SIEM-Bot online (API Client-Modus)...")
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
-    
-    # Befehl /status hinzufügen
     app.add_handler(CommandHandler("status", status))
     
-    print("🤖 Securitron SIEM-Bot online...")
-    print("📌 Nutze /status auf deinem Handy für eine manuelle Abfrage.")
-
-    # 3. Der Trick: Wir starten den Bot im asynchronen Kontext und fügen 
-    # den Alarm-Loop als Hintergrund-Task (create_task) hinzu. Dadurch blockiert er nicht!
     async with app:
         await app.start()
-        # Startet den Push-Monitor parallel im Hintergrund
         asyncio.create_task(alert_monitor_loop(app))
-        # Hält den Bot am Leben und lauscht auf Befehle von außen
         await app.updater.start_polling()
         
-        # Unendlicher Loop, um die Hauptfunktion aktiv zu halten
         while True:
             await asyncio.sleep(3600)
 
 if __name__ == "__main__":
-    # Behebt potenzielle Event-Loop-Konflikte auf einigen Plattformen
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
-        print("\n🤖 Securitron wird heruntergefahren. Auf Wiedersehen!")
+        print("\n🤖 Securitron wird heruntergefahren.")
